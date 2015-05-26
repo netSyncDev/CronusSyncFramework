@@ -3,11 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cronus.Core.Data.Sql;
+using Cronus.Core.Data.Sql.DataToSqlValueFormatters;
 
 namespace Cronus.Core.Data
 {
     public abstract class DataEntity
     {
+        private static Dictionary<Type, Func<DatabaseType, object, string>> _formatterFunctions;
+        private IDataValueToSqlValueFormatter _sqlValueFormatter;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected DataEntity()
+        {
+            this._sqlValueFormatter = new DefaultDataToSqlValueFormatter();
+        }
+
+        public static void RegisterSqlDataValueFormatFunction(Type typeToRegister,
+            Func<DatabaseType, object, string> formatFunction, bool shouldOverwrite)
+        {
+            
+        }
+
         /// <summary>
         /// Generates a Select Command for an Entity
         /// </summary>
@@ -124,6 +142,20 @@ namespace Cronus.Core.Data
             }
 
             throw new InvalidOperationException("The class has no TableAttribute");
+        }
+
+        /// <summary>
+        /// Gets the SqlValue for a Property
+        /// </summary>
+        /// <param name="property">The Property to get the SqlFormatted Value</param>
+        /// <param name="dbType">The Database Type the SqlValue should be Formatted to</param>
+        /// <returns>A Formatted SqlValue which can be Inserted in the Statement</returns>
+        private string GetSqlValueForProperty(PropertyInfo property, DatabaseType dbType)
+        {
+            if(_formatterFunctions.ContainsKey(property.PropertyType))
+                return _formatterFunctions[property.PropertyType].Invoke(dbType, property.GetValue(this));
+
+            _sqlValueFormatter.FormatValueToSqlValue(dbType, property.PropertyType, property.GetValue(this));
         }
     }
 }

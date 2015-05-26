@@ -6,7 +6,7 @@ namespace Cronus.Core.Data.Sql
     /// Used to have different Names in the Entity Classes. The Property Name does not belong to the DatabaseColumn Name.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class EntityColumnNameAttribute : Attribute
+    public sealed class EntityColumnNameAttribute : Attribute, IEquatable<EntityColumnNameAttribute>
     {
         private string _columnName;
 
@@ -30,6 +30,12 @@ namespace Cronus.Core.Data.Sql
                 throw new ArgumentNullException("columnName");
 
             this._columnName = columnName;
+        }
+
+        public bool Equals(EntityColumnNameAttribute other)
+        {
+            if (other.ColumnName.Equals(this.ColumnName)) return true;
+            return false;
         }
     }
 }

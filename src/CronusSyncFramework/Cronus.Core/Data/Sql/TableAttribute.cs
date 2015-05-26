@@ -32,6 +32,10 @@ namespace Cronus.Core.Data.Sql
             this._tableName = tableName;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return _tableName;
