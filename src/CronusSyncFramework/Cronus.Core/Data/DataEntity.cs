@@ -8,6 +8,10 @@ namespace Cronus.Core.Data
 {
     public abstract class DataEntity
     {
+        /// <summary>
+        /// Generates a Select Command for an Entity
+        /// </summary>
+        /// <returns>A Sql Statement which can be Executed</returns>
         public string GetSelectCommand()
         {
             TableAttribute tableInfo = GetTableInformations();
