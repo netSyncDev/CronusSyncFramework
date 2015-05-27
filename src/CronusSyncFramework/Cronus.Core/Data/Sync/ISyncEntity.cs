@@ -2,6 +2,6 @@
 {
     public interface ISyncEntity
     {
-         
+        int MainVersion { get; set; }
     }
 }

@@ -38,8 +38,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\DataEntity.cs" />
+    <Compile Include="Data\Sql\DatabaseType.cs" />
+    <Compile Include="Data\Sql\DataToSqlValueFormatters\DefaultDataToSqlValueFormatter.cs" />
     <Compile Include="Data\Sql\EntityColumnNameAttribute.cs" />
     <Compile Include="Data\Sql\ExcludeFromBuildOperationAttribute.cs" />
+    <Compile Include="Data\Sql\IDataValueToSqlValueFormatter.cs" />
     <Compile Include="Data\Sql\PkAttribute.cs" />
     <Compile Include="Data\Sql\PkAttributeType.cs" />
     <Compile Include="Data\Sql\SqlBuildOperation.cs" />
