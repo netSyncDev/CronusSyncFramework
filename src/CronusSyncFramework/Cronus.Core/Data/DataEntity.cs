@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Cronus.Core.Data.Sql;
-using Cronus.Core.Data.Sql.DataToSqlValueFormatters;
+using Cronus.Data.Sql;
+using Cronus.Data.Sql.DataToSqlValueFormatters;
 
-namespace Cronus.Core.Data
+namespace Cronus.Data
 {
     /// <summary>
     /// 
@@ -60,6 +60,15 @@ namespace Cronus.Core.Data
         }
 
         /// <summary>
+        /// Gets Executed Before an SqlBuild Operation is Executed
+        /// </summary>
+        /// <param name="buildOperation">The Executed Build Operation</param>
+        protected virtual void OnBeforeStatementBuilded(SqlBuildOperation buildOperation)
+        {
+            
+        }
+
+        /// <summary>
         /// Generates a Select Command for an Entity
         /// </summary>
         /// <returns>A Sql Statement which can be Executed</returns>
@@ -80,6 +89,7 @@ namespace Cronus.Core.Data
         /// <returns>Insert Sql Statement for this Entity</returns>
         public string GetInsertCommand()
         {
+            this.OnBeforeStatementBuilded(SqlBuildOperation.Insert);
             TableAttribute tableInfo = GetTableInformations();
             const string InsertTemplate = "INSERT INTO {0} ({1}) VALUES ({2});";
 

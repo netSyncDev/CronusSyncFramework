@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cronus.Core.Data.Sql
+namespace Cronus.Data.Sql
 {
     /// <summary>
     /// Represents the Primary key for a Entity

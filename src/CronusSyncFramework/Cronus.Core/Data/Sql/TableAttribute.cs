@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cronus.Core.Data.Sql
+namespace Cronus.Data.Sql
 {
     /// <summary>
     /// Represents a Table in the Database

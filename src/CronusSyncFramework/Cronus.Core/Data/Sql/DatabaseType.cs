@@ -1,4 +1,4 @@
-﻿namespace Cronus.Core.Data.Sql
+﻿namespace Cronus.Data.Sql
 {
     public enum DatabaseType
     {

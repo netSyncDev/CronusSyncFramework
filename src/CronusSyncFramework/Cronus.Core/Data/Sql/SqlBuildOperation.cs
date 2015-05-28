@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Cronus.Core.Data.Sql
+namespace Cronus.Data.Sql
 {
     /// <summary>
     /// Represents the Possible Operations which can be Executed on a Entity

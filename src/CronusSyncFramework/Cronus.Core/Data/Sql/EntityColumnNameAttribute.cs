@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cronus.Core.Data.Sql
+namespace Cronus.Data.Sql
 {
     /// <summary>
     /// Used to have different Names in the Entity Classes. The Property Name does not belong to the DatabaseColumn Name.

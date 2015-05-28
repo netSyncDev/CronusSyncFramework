@@ -5,15 +5,15 @@
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{56D884B1-C88E-4E02-9DF2-A1A2A44D765B}</ProjectGuid>
+    <ProjectGuid>{E085DFBE-048A-472E-910E-AC37331618DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cronus</RootNamespace>
-    <AssemblyName>Cronus.Core</AssemblyName>
-    <DefaultLanguage>de-DE</DefaultLanguage>
+    <AssemblyName>Cronus.Mobile</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -34,27 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Data\DataEntity.cs" />
-    <Compile Include="Data\Sql\DatabaseType.cs" />
-    <Compile Include="Data\Sql\DataToSqlValueFormatters\DefaultDataToSqlValueFormatter.cs" />
-    <Compile Include="Data\Sql\EntityColumnNameAttribute.cs" />
-    <Compile Include="Data\Sql\ExcludeFromBuildOperationAttribute.cs" />
-    <Compile Include="Data\Sql\IDataValueToSqlValueFormatter.cs" />
-    <Compile Include="Data\Sql\PkAttribute.cs" />
-    <Compile Include="Data\Sql\PkAttributeType.cs" />
-    <Compile Include="Data\Sql\SqlBuildOperation.cs" />
-    <Compile Include="Data\Sql\TableAttribute.cs" />
-    <Compile Include="Data\Sync\ISyncEntity.cs" />
-    <Compile Include="Data\Sync\SyncEntity.cs" />
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <Folder Include="Data\" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

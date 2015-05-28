@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cronus.Core.Data.Sql
+namespace Cronus.Data.Sql
 {
     /// <summary>
     /// Used to Exclude Properties on a <see cref="SqlBuildOperation"/>
