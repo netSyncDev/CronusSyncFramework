@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Cronus.Data.Sql.DataToSqlValueFormatters
 {
@@ -22,7 +23,7 @@ namespace Cronus.Data.Sql.DataToSqlValueFormatters
                 float? floatVal = (float?)value;
                 if (floatVal.HasValue)
                 {
-                    string floatString = floatVal.Value.ToString("F");
+                    string floatString = floatVal.Value.ToString("F", CultureInfo.CurrentCulture);
                     floatString = floatString.Replace(',', '.');
                     return floatString;
                 }

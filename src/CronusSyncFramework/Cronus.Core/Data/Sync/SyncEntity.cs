@@ -16,9 +16,9 @@ namespace Cronus.Data.Sync
         /// Gets Executed Before an SqlBuild Operation is Executed
         /// </summary>
         /// <param name="buildOperations">The Executed Build Operation</param>
-        protected override void OnBeforeStatementBuilded(Sql.SqlBuildOperations buildOperations)
+        protected override void OnBeforeStatementBuild(Sql.SqlBuildOperations buildOperations)
         {
-            base.OnBeforeStatementBuilded(buildOperations);
+            base.OnBeforeStatementBuild(buildOperations);
 
             switch (buildOperations)
             {

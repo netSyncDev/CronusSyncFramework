@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Cronus.Data.Sql;
@@ -18,6 +19,10 @@ namespace Cronus.Data
 
         private static DatabaseType _targetDatabaseType;
 
+        /// <summary>
+        /// Gets informatins about this Table (DataEntity)
+        /// </summary>
+        /// <value>The Informations about the table <see cref="TableAttribute"/></value>
         internal TableAttribute TableInformations
         {
             get { return this.GetTableInformations(); }
@@ -33,15 +38,21 @@ namespace Cronus.Data
         }
 
         /// <summary>
-        /// 
+        /// Registers a own DataValue To SqlValue Format Function
         /// </summary>
-        /// <param name="typeToRegister"></param>
-        /// <param name="formatFunction"></param>
-        /// <param name="shouldOverwrite"></param>
+        /// <param name="typeToRegister">The Type the Function should be applied to</param>
+        /// <param name="formatFunction">The function which formats the .NET Type in the TargetDatabase Sql Value as string</param>
+        /// <param name="shouldOverwrite"><c>True</c> if an existing Function should be overwritten, otherwise <c>False</c> in this case an Exception is thrown</param>
         /// <exception cref="ArgumentException">If a ConvertFunction for this Type is already Found and shouldOverwrite = <c>False</c></exception>
         public static void RegisterSqlDataValueFormatFunction(Type typeToRegister,
             Func<DatabaseType, object, string> formatFunction, bool shouldOverwrite)
         {
+            if (typeToRegister == null)
+                throw new ArgumentNullException("typeToRegister");
+
+            if (formatFunction == null)
+                throw new ArgumentNullException("formatFunction");
+
             if (_formatterFunctions.ContainsKey(typeToRegister) && !shouldOverwrite)
                 throw new ArgumentException(
                     string.Format(Resources.KeyFoundInRegisterConvertFunction,
@@ -69,7 +80,7 @@ namespace Cronus.Data
         /// Gets Executed Before an SqlBuild Operation is Executed
         /// </summary>
         /// <param name="buildOperations">The Executed Build Operation</param>
-        protected virtual void OnBeforeStatementBuilded(SqlBuildOperations buildOperations)
+        protected virtual void OnBeforeStatementBuild(SqlBuildOperations buildOperations)
         {
             
         }
@@ -94,7 +105,7 @@ namespace Cronus.Data
         /// <returns>Insert Sql Statement for this Entity</returns>
         public string GetInsertCommand()
         {
-            this.OnBeforeStatementBuilded(SqlBuildOperations.Insert);
+            this.OnBeforeStatementBuild(SqlBuildOperations.Insert);
             const string InsertTemplate = "INSERT INTO {0} ({1}) VALUES ({2});";
 
             List<PropertyInfo> propertiesForOperation = this.GetPropertiesForOperation(SqlBuildOperations.Insert);
@@ -234,7 +245,7 @@ namespace Cronus.Data
                 return tableAttri;
             }
 
-            throw new InvalidOperationException("The class has no TableAttribute");
+            throw new InvalidOperationException("The class has no Table Attribute");
         }
 
         /// <summary>

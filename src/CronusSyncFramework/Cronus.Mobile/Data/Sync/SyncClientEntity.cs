@@ -10,10 +10,10 @@ namespace Cronus.Data.Sync
         /// Gets Executed Before an SqlBuild Operation is Executed
         /// </summary>
         /// <param name="buildOperations">The Executed Build Operation</param>
-        protected override void OnBeforeStatementBuilded(SqlBuildOperations buildOperations)
+        protected override void OnBeforeStatementBuild(SqlBuildOperations buildOperations)
         {
             //ToDo: Darüber nachdenken. Evtl mittels INotifyPropertyChanged änderungen feststellen und dann SubVersion inkrementieren
-            base.OnBeforeStatementBuilded(buildOperations);
+            base.OnBeforeStatementBuild(buildOperations);
 
             if (buildOperations == SqlBuildOperations.Update)
                 _subVersion ++;

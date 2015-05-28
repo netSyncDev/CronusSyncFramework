@@ -7,16 +7,18 @@ namespace Cronus.Data.Sql
         /// <summary>
         /// 
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704")]
         [SuppressMessage("Microsoft.Naming", "CA1709")]
         MsSql,
         /// <summary>
         /// 
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1709")]
+        [SuppressMessage("Microsoft.Naming", "CA1704")]
         MySql,
         /// <summary>
         /// 
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704")]
         [SuppressMessage("Microsoft.Naming", "CA1709")]
         SqLite
     }
