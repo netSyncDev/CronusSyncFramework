@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the Type of the Primary Key for a Entity
     /// </summary>
-    public enum PkAttributeType
+    public enum PKType
     {
         /// <summary>
         /// Defines the Normal Primary Key for a Entity.

@@ -43,6 +43,9 @@ namespace Cronus.Data.Sql
 
         public bool Equals(TableAttribute other)
         {
+            if (other == null)
+                return false;
+
             return other.TableName.Equals(this.TableName);
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Cronus.Data.Sql;
 using Cronus.Data.Sql.DataToSqlValueFormatters;
+using Cronus.Properties;
 
 namespace Cronus.Data
 {
@@ -16,6 +17,11 @@ namespace Cronus.Data
         private static IDataValueToSqlValueFormatter _sqlValueFormatter;
 
         private static DatabaseType _targetDatabaseType;
+
+        internal TableAttribute TableInformations
+        {
+            get { return this.GetTableInformations(); }
+        }
 
         /// <summary>
         /// 
@@ -38,7 +44,7 @@ namespace Cronus.Data
         {
             if (_formatterFunctions.ContainsKey(typeToRegister) && !shouldOverwrite)
                 throw new ArgumentException(
-                    string.Format("The Key {0} was already found. Use shouldOverwrite to Overwrite the Existing Key",
+                    string.Format(Resources.KeyFoundInRegisterConvertFunction,
                         typeToRegister.Name));
 
             if (_formatterFunctions.ContainsKey(typeToRegister) && shouldOverwrite)
@@ -62,8 +68,8 @@ namespace Cronus.Data
         /// <summary>
         /// Gets Executed Before an SqlBuild Operation is Executed
         /// </summary>
-        /// <param name="buildOperation">The Executed Build Operation</param>
-        protected virtual void OnBeforeStatementBuilded(SqlBuildOperation buildOperation)
+        /// <param name="buildOperations">The Executed Build Operation</param>
+        protected virtual void OnBeforeStatementBuilded(SqlBuildOperations buildOperations)
         {
             
         }
@@ -74,13 +80,12 @@ namespace Cronus.Data
         /// <returns>A Sql Statement which can be Executed</returns>
         public string GetSelectCommand()
         {
-            TableAttribute tableInfo = GetTableInformations();
             const string selectTemplate = "SELECT {0} FROM {1}";
 
-            List<PropertyInfo> propertiesForOperation = this.GetPropertiesForOperation(SqlBuildOperation.Select);
+            List<PropertyInfo> propertiesForOperation = this.GetPropertiesForOperation(SqlBuildOperations.Select);
             string sqlFieldsForOperation = this.GetSqlFieldsForOperation(propertiesForOperation);
 
-            return string.Format(selectTemplate, sqlFieldsForOperation, tableInfo.ToString());
+            return string.Format(selectTemplate, sqlFieldsForOperation, this.TableInformations);
         }
 
         /// <summary>
@@ -89,11 +94,10 @@ namespace Cronus.Data
         /// <returns>Insert Sql Statement for this Entity</returns>
         public string GetInsertCommand()
         {
-            this.OnBeforeStatementBuilded(SqlBuildOperation.Insert);
-            TableAttribute tableInfo = GetTableInformations();
+            this.OnBeforeStatementBuilded(SqlBuildOperations.Insert);
             const string InsertTemplate = "INSERT INTO {0} ({1}) VALUES ({2});";
 
-            List<PropertyInfo> propertiesForOperation = this.GetPropertiesForOperation(SqlBuildOperation.Insert);
+            List<PropertyInfo> propertiesForOperation = this.GetPropertiesForOperation(SqlBuildOperations.Insert);
             string sqlFieldsForOperation = this.GetSqlFieldsForOperation(propertiesForOperation);
 
             string insertValues = string.Empty;
@@ -105,7 +109,7 @@ namespace Cronus.Data
                     insertValues += ", ";
             }
 
-            return string.Format(InsertTemplate, tableInfo, sqlFieldsForOperation, insertValues);
+            return string.Format(InsertTemplate, this.TableInformations, sqlFieldsForOperation, insertValues);
         }
 
         /// <summary>
@@ -114,13 +118,12 @@ namespace Cronus.Data
         /// <returns>A Sql Statement which deletes this Data Entity</returns>
         public string GetDeleteCommand()
         {
-            TableAttribute tableInfo = GetTableInformations();
             const string deleteTemplate = "DELTE FROM {0} WHERE {1}";
 
             string whereCondition = String.Empty;
 
             List<PropertyInfo> pkProps =
-                this.GetEntityProperties().Where(x => x.IsDefined(typeof(PkAttribute))).ToList();
+                this.GetEntityProperties().Where(x => x.IsDefined(typeof(PKAttribute))).ToList();
 
             if (pkProps.Count > 1)
             {
@@ -148,7 +151,7 @@ namespace Cronus.Data
                 //ToDo Implment Exception
                 //throw new DataEntityException();
             }
-            return string.Format(deleteTemplate, tableInfo, whereCondition);
+            return string.Format(deleteTemplate, this.TableInformations, whereCondition);
         }
 
         /// <summary>
@@ -175,16 +178,16 @@ namespace Cronus.Data
         /// <summary>
         /// Gets all Properties for the Statement Build Process
         /// </summary>
-        /// <param name="operation">The Sql Build Operation</param>
+        /// <param name="operations">The Sql Build Operation</param>
         /// <returns>A list of Properties which are icluded in the Build Process of the Statement</returns>
-        private List<PropertyInfo> GetPropertiesForOperation(SqlBuildOperation operation)
+        private List<PropertyInfo> GetPropertiesForOperation(SqlBuildOperations operations)
         {
             List<PropertyInfo> @return = new List<PropertyInfo>();
             List<PropertyInfo> entityProperties = this.GetEntityProperties();
             for (int i = 0; i < entityProperties.Count(); i++)
             {
                 PropertyInfo property = entityProperties.ElementAt(i);
-                if(GetIfPropertyIsExcludedFromBuildOperation(property, operation))
+                if(GetIfPropertyIsExcludedFromBuildOperation(property, operations))
                     continue;
                 @return.Add(property);
             }
@@ -195,15 +198,15 @@ namespace Cronus.Data
         /// Checks if a Property needs to be excluded from the Statement build process
         /// </summary>
         /// <param name="property">The property which needs to be checked</param>
-        /// <param name="operation">The Sql Operation which is executed</param>
+        /// <param name="operations">The Sql Operation which is executed</param>
         /// <returns><c>True</c> if the Property needs to be excluded, otherwise <c>False</c></returns>
-        private bool GetIfPropertyIsExcludedFromBuildOperation(PropertyInfo property, SqlBuildOperation operation)
+        private bool GetIfPropertyIsExcludedFromBuildOperation(PropertyInfo property, SqlBuildOperations operations)
         {
-            // Exclude the Property if the PkType is Autoincrement. It´s not needed to put it in the Insert Process
-            if (property.IsDefined(typeof (PkAttribute)))
+            // Exclude the Property if the PKType is Autoincrement. It´s not needed to put it in the Insert Process
+            if (property.IsDefined(typeof (PKAttribute)))
             {
-                PkAttribute attri = property.GetCustomAttribute<PkAttribute>();
-                if (attri.PkType == PkAttributeType.AutoIncrement)
+                PKAttribute attri = property.GetCustomAttribute<PKAttribute>();
+                if (attri.TypeOfPK == PKType.AutoIncrement)
                     return true;
             }
 
@@ -212,7 +215,7 @@ namespace Cronus.Data
             {
                 ExcludeFromBuildOperationAttribute attri =
                     property.GetCustomAttribute<ExcludeFromBuildOperationAttribute>();
-                if ((attri.Excludes & operation) == operation)
+                if ((attri.Excludes & operations) == operations)
                     return true;
             }
             return false;

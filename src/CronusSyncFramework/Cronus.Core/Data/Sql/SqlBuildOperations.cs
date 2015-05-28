@@ -6,23 +6,23 @@ namespace Cronus.Data.Sql
     /// Represents the Possible Operations which can be Executed on a Entity
     /// </summary>
     [Flags]
-    public enum SqlBuildOperation
+    public enum SqlBuildOperations
     {
         /// <summary>
         /// Select Command
         /// </summary>
-        Select = 0x00,
+        Select = 0x01,
         /// <summary>
         /// Insert Command
         /// </summary>
-        Insert = 0x01,
+        Insert = 0x02,
         /// <summary>
         /// Update Command
         /// </summary>
-        Update = 0x02,
+        Update = 0x03,
         /// <summary>
         /// Delete Command
         /// </summary>
-        Delete = 0x03
+        Delete = 0x04
     }
 }

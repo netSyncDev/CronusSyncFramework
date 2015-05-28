@@ -15,18 +15,18 @@ namespace Cronus.Data.Sync
         /// <summary>
         /// Gets Executed Before an SqlBuild Operation is Executed
         /// </summary>
-        /// <param name="buildOperation">The Executed Build Operation</param>
-        protected override void OnBeforeStatementBuilded(Sql.SqlBuildOperation buildOperation)
+        /// <param name="buildOperations">The Executed Build Operation</param>
+        protected override void OnBeforeStatementBuilded(Sql.SqlBuildOperations buildOperations)
         {
-            base.OnBeforeStatementBuilded(buildOperation);
+            base.OnBeforeStatementBuilded(buildOperations);
 
-            switch (buildOperation)
+            switch (buildOperations)
             {
-                case Sql.SqlBuildOperation.Insert:
+                case Sql.SqlBuildOperations.Insert:
                     this._mainVersion = -1;
                     this._syncId = Guid.NewGuid();
                     break;
-                case Sql.SqlBuildOperation.Update:
+                case Sql.SqlBuildOperations.Update:
                     this._changedAt = DateTime.Now;
                     break;
             }

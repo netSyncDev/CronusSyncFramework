@@ -32,6 +32,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Data\DataEntity.cs" />
@@ -41,8 +43,8 @@
     <Compile Include="Data\Sql\ExcludeFromBuildOperationAttribute.cs" />
     <Compile Include="Data\Sql\IDataValueToSqlValueFormatter.cs" />
     <Compile Include="Data\Sql\PkAttribute.cs" />
-    <Compile Include="Data\Sql\PkAttributeType.cs" />
-    <Compile Include="Data\Sql\SqlBuildOperation.cs" />
+    <Compile Include="Data\Sql\PkType.cs" />
+    <Compile Include="Data\Sql\SqlBuildOperations.cs" />
     <Compile Include="Data\Sql\TableAttribute.cs" />
     <Compile Include="Data\Sync\ISyncEntity.cs" />
     <Compile Include="Data\Sync\SyncEntity.cs" />

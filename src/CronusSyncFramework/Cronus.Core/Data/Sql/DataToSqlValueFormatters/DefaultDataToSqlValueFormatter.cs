@@ -93,7 +93,7 @@ namespace Cronus.Data.Sql.DataToSqlValueFormatters
                     return "\"" + value.ToString() + "\"";
 
                 // Escape the Single Quote Values for Sqlite and Mssql
-                if (dbType == DatabaseType.Sqlite || dbType == DatabaseType.MsSql)
+                if (dbType == DatabaseType.SqLite || dbType == DatabaseType.MsSql)
                 {
                     if (value.ToString().Contains("'"))
                     {

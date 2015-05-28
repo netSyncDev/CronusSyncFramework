@@ -3,7 +3,7 @@
 namespace Cronus.Data.Sync
 {
     /// <summary>
-    /// 
+    /// Represents a Sync Client Data Entity
     /// </summary>
     internal interface ISyncClientEntity : ISyncEntity
     {

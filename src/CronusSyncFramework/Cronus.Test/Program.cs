@@ -12,11 +12,11 @@ namespace Cronus.Test
     class TestEntity : DataEntity
     {
         [EntityColumnName("Id")]
-        [Pk(PkAttributeType.Normal)]
+        [PK(PKType.Normal)]
         public int Id { get; set; }
 
         [EntityColumnName("Id2")]
-        [Pk(PkAttributeType.Normal)]
+        [PK(PKType.Normal)]
         public int Id2 { get; set; }
 
         [EntityColumnName("Name")]

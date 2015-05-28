@@ -34,6 +34,8 @@ namespace Cronus.Data.Sql
 
         public bool Equals(EntityColumnNameAttribute other)
         {
+            if (other == null) return false;
+
             if (other.ColumnName.Equals(this.ColumnName)) return true;
             return false;
         }
