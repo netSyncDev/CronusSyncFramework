@@ -1,22 +1,24 @@
-﻿using Cronus.Data.Sql;
+﻿using System.ComponentModel;
 
 namespace Cronus.Data.Sync
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public abstract class SyncClientEntity : SyncEntity, ISyncClientEntity
     {
         public int _subVersion { get; set; }
 
         /// <summary>
-        /// Gets Executed Before an SqlBuild Operation is Executed
+        /// Gets called when the <see cref="INotifyPropertyChanged.PropertyChanged"/> - event is triggered
         /// </summary>
-        /// <param name="buildOperations">The Executed Build Operation</param>
-        protected override void OnBeforeStatementBuild(SqlBuildOperations buildOperations)
+        /// <param name="propertyName">Der Name der Eigenschaft.</param>
+        protected override void OnPropertyChanged(string propertyName = null)
         {
-            //ToDo: Darüber nachdenken. Evtl mittels INotifyPropertyChanged änderungen feststellen und dann SubVersion inkrementieren
-            base.OnBeforeStatementBuild(buildOperations);
+            base.OnPropertyChanged(propertyName);
 
-            if (buildOperations == SqlBuildOperations.Update)
-                _subVersion ++;
+            // Increment the SubVersion of this Entity to detect a change on the Dataset
+            this._subVersion++;
         }
     }
 }

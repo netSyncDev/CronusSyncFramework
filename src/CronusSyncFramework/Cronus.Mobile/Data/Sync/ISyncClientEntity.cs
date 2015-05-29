@@ -11,7 +11,7 @@ namespace Cronus.Data.Sync
         /// Indicates the Changes on the Client Side
         /// </summary>
         /// <remarks>Icremented one Time on each Change</remarks>
-        [JsonProperty("_subVersion")]
+        [JsonIgnore]
         int _subVersion { get; set; }
     }
 }

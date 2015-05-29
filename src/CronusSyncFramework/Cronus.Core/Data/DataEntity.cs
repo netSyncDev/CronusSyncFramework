@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Cronus.Data.Sql;
 using Cronus.Data.Sql.DataToSqlValueFormatters;
 using Cronus.Properties;
+using System.ComponentModel;
 
 namespace Cronus.Data
 {
     /// <summary>
     /// 
     /// </summary>
-    public abstract class DataEntity
+    public abstract class DataEntity : INotifyPropertyChanged
     {
+        private HashSet<string> _changedPropertys;
+
         private static Dictionary<Type, Func<DatabaseType, object, string>> _formatterFunctions;
         private static IDataValueToSqlValueFormatter _sqlValueFormatter;
 
@@ -35,6 +38,7 @@ namespace Cronus.Data
         {
             _sqlValueFormatter = new DefaultDataToSqlValueFormatter();
             _formatterFunctions = new Dictionary<Type, Func<DatabaseType, object, string>>();
+            this._changedPropertys = new HashSet<string>();
         }
 
         /// <summary>
@@ -123,6 +127,11 @@ namespace Cronus.Data
             return string.Format(InsertTemplate, this.TableInformations, sqlFieldsForOperation, insertValues);
         }
 
+        public string GetUpdateCommand()
+        {
+            
+        }
+
         /// <summary>
         /// Gets the Delete Command for a Entity
         /// </summary>
@@ -163,6 +172,37 @@ namespace Cronus.Data
                 //throw new DataEntityException();
             }
             return string.Format(deleteTemplate, this.TableInformations, whereCondition);
+        }
+
+        /// <summary>
+        /// Löst das <see cref="INotifyPropertyChanged.PropertyChanged"/> - Ereignis aus.
+        /// </summary>
+        /// <param name="propertyName">Der Name der Eigenschaft.</param>
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            // Debug.Assert(string.IsNullOrEmpty(propertyName) || (this.GetType().GetRuntimeProperty(propertyName) != null), "Überprüfen, ob diese Eigenschaft in dieser Instanz existiert.");
+            PropertyChangedEventHandler handler = this._propertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="current"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool SetEntityValue<T>(ref T current, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (!Equals(current, newValue))
+            {
+                current = newValue;
+                this.OnPropertyChanged(propertyName);
+                this._changedPropertys.Add(propertyName);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -260,6 +300,23 @@ namespace Cronus.Data
                 return _formatterFunctions[property.PropertyType].Invoke(dbType, property.GetValue(this));
 
             return _sqlValueFormatter.FormatValueToSqlValue(dbType, property.PropertyType, property.GetValue(this));
+        }
+
+        /// <summary>
+        /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
+        /// </summary>
+        // ReSharper disable InconsistentNaming
+        private event PropertyChangedEventHandler _propertyChanged;
+
+        // ReSharper restore InconsistentNaming
+
+        /// <summary>
+        /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
+        /// </summary>
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        {
+            add { this._propertyChanged += value; }
+            remove { this._propertyChanged -= value; }
         }
     }
 }

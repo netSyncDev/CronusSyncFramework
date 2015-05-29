@@ -19,8 +19,14 @@ namespace Cronus.Test
         [PK(PKType.Normal)]
         public int Id2 { get; set; }
 
+        private string _name;
+
         [EntityColumnName("Name")]
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return this._name; }
+            set { base.SetEntityValue<string>(ref this._name, value); }
+        }
     }
 
     class Program

@@ -12,12 +12,20 @@ namespace Cronus.Data.Sync
 
         public bool _deleted { get; set; }
 
+        protected override void OnPropertyChanged(string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+
+            this._changedAt = DateTime.Now;
+        }
+
         /// <summary>
         /// Gets Executed Before an SqlBuild Operation is Executed
         /// </summary>
         /// <param name="buildOperations">The Executed Build Operation</param>
         protected override void OnBeforeStatementBuild(Sql.SqlBuildOperations buildOperations)
         {
+            //ToDo: Darüber nachdenken. Evtl mittels INotifyPropertyChanged änderungen feststellen und dann SubVersion inkrementieren
             base.OnBeforeStatementBuild(buildOperations);
 
             switch (buildOperations)
@@ -25,9 +33,6 @@ namespace Cronus.Data.Sync
                 case Sql.SqlBuildOperations.Insert:
                     this._mainVersion = -1;
                     this._syncId = Guid.NewGuid();
-                    break;
-                case Sql.SqlBuildOperations.Update:
-                    this._changedAt = DateTime.Now;
                     break;
             }
         }
