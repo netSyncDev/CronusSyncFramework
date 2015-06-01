@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace Cronus.Data.Sync
 {
@@ -12,11 +13,18 @@ namespace Cronus.Data.Sync
 
         public bool _deleted { get; set; }
 
+        /// <summary>
+        /// Löst das <see cref="INotifyPropertyChanged.PropertyChanged"/> - Ereignis aus.
+        /// </summary>
+        /// <param name="propertyName">Der Name der Eigenschaft.</param>
         protected override void OnPropertyChanged(string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
 
-            this._changedAt = DateTime.Now;
+            this.IgnoreNotify(() =>
+            {
+                this._changedAt = DateTime.Now;
+            });
         }
 
         /// <summary>
@@ -31,13 +39,13 @@ namespace Cronus.Data.Sync
             switch (buildOperations)
             {
                 case Sql.SqlBuildOperations.Insert:
-                    this._mainVersion = -1;
-                    this._syncId = Guid.NewGuid();
+                    this.IgnoreNotify(() =>
+                    {
+                        this._mainVersion = -1;
+                        this._syncId = Guid.NewGuid();
+                    });
                     break;
             }
         }
-
-
-
     }
 }

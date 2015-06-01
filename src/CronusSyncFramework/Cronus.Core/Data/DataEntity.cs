@@ -22,6 +22,25 @@ namespace Cronus.Data
 
         private static DatabaseType _targetDatabaseType;
 
+        private bool _isSupressedNotifyPropertyChanged;
+
+        /// <summary>
+        /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
+        /// </summary>
+        // ReSharper disable InconsistentNaming
+        private event PropertyChangedEventHandler _propertyChanged;
+
+        // ReSharper restore InconsistentNaming
+
+        /// <summary>
+        /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
+        /// </summary>
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        {
+            add { this._propertyChanged += value; }
+            remove { this._propertyChanged -= value; }
+        }
+
         /// <summary>
         /// Gets informatins about this Table (DataEntity)
         /// </summary>
@@ -129,7 +148,26 @@ namespace Cronus.Data
 
         public string GetUpdateCommand()
         {
-            
+            const string updateTemplate = "UPDATE {0} SET {1} WHERE {2}";
+
+            string whereCondition = this.GenerateWhereCondition();
+
+            string setValues = string.Empty;
+            List<PropertyInfo> propertiesForOperation = this.GetPropertiesForOperation(SqlBuildOperations.Update);
+
+            for (int i = 0; i < propertiesForOperation.Count; i++)
+            {
+                PropertyInfo property = propertiesForOperation.ElementAt(i);
+                EntityColumnNameAttribute entityInfo = property.GetCustomAttribute<EntityColumnNameAttribute>();
+
+                setValues += string.Concat(entityInfo.ColumnName, " = ",
+                    this.GetSqlValueForProperty(property, _targetDatabaseType));
+
+                if (i != propertiesForOperation.Count - 1)
+                    setValues += ", ";
+            }
+
+            return string.Format(updateTemplate, this.TableInformations, setValues, whereCondition);
         }
 
         /// <summary>
@@ -140,10 +178,16 @@ namespace Cronus.Data
         {
             const string deleteTemplate = "DELTE FROM {0} WHERE {1}";
 
+            string whereCondition = GenerateWhereCondition();
+            return string.Format(deleteTemplate, this.TableInformations, whereCondition);
+        }
+
+        private string GenerateWhereCondition()
+        {
             string whereCondition = String.Empty;
 
             List<PropertyInfo> pkProps =
-                this.GetEntityProperties().Where(x => x.IsDefined(typeof(PKAttribute))).ToList();
+                this.GetEntityProperties().Where(x => x.IsDefined(typeof (PKAttribute))).ToList();
 
             if (pkProps.Count > 1)
             {
@@ -163,15 +207,22 @@ namespace Cronus.Data
             {
                 EntityColumnNameAttribute entityInfo =
                     pkProps.ElementAt(0).GetCustomAttribute<EntityColumnNameAttribute>();
-                string value = this.GetSqlValueForProperty(pkProps.ElementAt(0), _targetDatabaseType); 
+                string value = this.GetSqlValueForProperty(pkProps.ElementAt(0), _targetDatabaseType);
                 whereCondition += string.Concat(entityInfo.ColumnName, " = ", value);
             }
             else
             {
-                //ToDo Implment Exception
+                //ToDo: Implment Exception
                 //throw new DataEntityException();
             }
-            return string.Format(deleteTemplate, this.TableInformations, whereCondition);
+            return whereCondition;
+        }
+
+        public void IgnoreNotify(Action action)
+        {
+            this._isSupressedNotifyPropertyChanged = true;
+            action();
+            this._isSupressedNotifyPropertyChanged = false;
         }
 
         /// <summary>
@@ -180,6 +231,8 @@ namespace Cronus.Data
         /// <param name="propertyName">Der Name der Eigenschaft.</param>
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
+            if (this._isSupressedNotifyPropertyChanged) return;
+
             // Debug.Assert(string.IsNullOrEmpty(propertyName) || (this.GetType().GetRuntimeProperty(propertyName) != null), "Überprüfen, ob diese Eigenschaft in dieser Instanz existiert.");
             PropertyChangedEventHandler handler = this._propertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -240,6 +293,13 @@ namespace Cronus.Data
                 PropertyInfo property = entityProperties.ElementAt(i);
                 if(GetIfPropertyIsExcludedFromBuildOperation(property, operations))
                     continue;
+
+                if (operations == SqlBuildOperations.Update)
+                {
+                    if (!this._changedPropertys.Contains(property.Name))
+                        continue;
+                }
+
                 @return.Add(property);
             }
             return @return;
@@ -256,6 +316,9 @@ namespace Cronus.Data
             // Exclude the Property if the PKType is Autoincrement. It´s not needed to put it in the Insert Process
             if (property.IsDefined(typeof (PKAttribute)))
             {
+                if (operations == SqlBuildOperations.Update)
+                    return true;
+
                 PKAttribute attri = property.GetCustomAttribute<PKAttribute>();
                 if (attri.TypeOfPK == PKType.AutoIncrement)
                     return true;
@@ -302,21 +365,8 @@ namespace Cronus.Data
             return _sqlValueFormatter.FormatValueToSqlValue(dbType, property.PropertyType, property.GetValue(this));
         }
 
-        /// <summary>
-        /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
-        /// </summary>
-        // ReSharper disable InconsistentNaming
-        private event PropertyChangedEventHandler _propertyChanged;
 
-        // ReSharper restore InconsistentNaming
 
-        /// <summary>
-        /// Tritt ein, wenn sich ein Eigenschaftswert ändert.
-        /// </summary>
-        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
-        {
-            add { this._propertyChanged += value; }
-            remove { this._propertyChanged -= value; }
-        }
+
     }
 }
