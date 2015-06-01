@@ -3,10 +3,13 @@
 namespace Cronus.Data.Sync
 {
     /// <summary>
-    /// 
+    /// Represents a Cleint Entity which will be synchronised to the Server
     /// </summary>
     public abstract class SyncClientEntity : SyncEntity, ISyncClientEntity
     {
+        /// <summary>
+        /// Indicates the Client-Side Changes on an Entity
+        /// </summary>
         public int _subVersion { get; set; }
 
         /// <summary>
@@ -18,7 +21,10 @@ namespace Cronus.Data.Sync
             base.OnPropertyChanged(propertyName);
 
             // Increment the SubVersion of this Entity to detect a change on the Dataset
-            this._subVersion++;
+            this.IgnoreNotify(() =>
+            {
+                this._subVersion++;
+            });
         }
     }
 }
