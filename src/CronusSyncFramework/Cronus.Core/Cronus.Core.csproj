@@ -15,6 +15,8 @@
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +43,8 @@
     <Compile Include="Data\Sql\DataToSqlValueFormatters\DefaultDataToSqlValueFormatter.cs" />
     <Compile Include="Data\Sql\EntityColumnNameAttribute.cs" />
     <Compile Include="Data\Sql\ExcludeFromBuildOperationAttribute.cs" />
+    <Compile Include="Data\Sql\ExecutionEngines\BaseSqlExecutionEngine.cs" />
+    <Compile Include="Data\Sql\ExecutionEngines\ISqlExecutionEngine.cs" />
     <Compile Include="Data\Sql\IDataValueToSqlValueFormatter.cs" />
     <Compile Include="Data\Sql\PkAttribute.cs" />
     <Compile Include="Data\Sql\PkType.cs" />
@@ -48,6 +52,7 @@
     <Compile Include="Data\Sql\TableAttribute.cs" />
     <Compile Include="Data\Sync\ISyncEntity.cs" />
     <Compile Include="Data\Sync\SyncChangesHelper.cs" />
+    <Compile Include="Data\Sync\BaseSyncClient.cs" />
     <Compile Include="Data\Sync\SyncEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -70,7 +75,15 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

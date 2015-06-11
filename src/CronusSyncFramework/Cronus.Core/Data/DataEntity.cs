@@ -15,7 +15,10 @@ namespace Cronus.Data
     /// </summary>
     public abstract class DataEntity : INotifyPropertyChanged
     {
-        private HashSet<string> _changedPropertys;
+        /// <summary>
+        /// Contains all changed Properties to generate the UpdateCommand only for the Updated Properties
+        /// </summary>
+        private List<string> _changedPropertys;
 
         private static Dictionary<Type, Func<DatabaseType, object, string>> _formatterFunctions;
         private static IDataValueToSqlValueFormatter _sqlValueFormatter;
@@ -57,7 +60,7 @@ namespace Cronus.Data
         {
             _sqlValueFormatter = new DefaultDataToSqlValueFormatter();
             _formatterFunctions = new Dictionary<Type, Func<DatabaseType, object, string>>();
-            this._changedPropertys = new HashSet<string>();
+            this._changedPropertys = new List<string>();
         }
 
         /// <summary>

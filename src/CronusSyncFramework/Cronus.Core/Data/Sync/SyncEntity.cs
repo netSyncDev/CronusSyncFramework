@@ -34,18 +34,18 @@ namespace Cronus.Data.Sync
         protected override void OnBeforeStatementBuild(Sql.SqlBuildOperations buildOperations)
         {
             //ToDo: Darüber nachdenken. Evtl mittels INotifyPropertyChanged änderungen feststellen und dann SubVersion inkrementieren
-            base.OnBeforeStatementBuild(buildOperations);
+            //base.OnBeforeStatementBuild(buildOperations);
 
-            switch (buildOperations)
-            {
-                case Sql.SqlBuildOperations.Insert:
-                    this.IgnoreNotify(() =>
-                    {
-                        this._mainVersion = -1;
-                        this._syncId = Guid.NewGuid();
-                    });
-                    break;
-            }
+            //switch (buildOperations)
+            //{
+            //    case Sql.SqlBuildOperations.Insert:
+            //        this.IgnoreNotify(() =>
+            //        {
+            //            this._mainVersion = -1;
+            //            this._syncId = Guid.NewGuid();
+            //        });
+            //        break;
+            //}
         }
     }
 }
